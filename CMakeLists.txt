@@ -2,15 +2,23 @@ cmake_minimum_required(VERSION 3.29.0 FATAL_ERROR)
 
 project(QT-tests VERSION 1.0.0 LANGUAGES CXX)
 
-#See if the environment var is set
-if(DEFINED ENV{Qt${QT_MAJOR_VERSION}_HOME})
-    message(STATUS "Looking for Qt in: " $ENV{Qt${QT_MAJOR_VERSION}_HOME})
+find_program(QT_QMAKE_EXECUTABLE qmake)
+
+if(QT_QMAKE_EXECUTABLE)
+    message(STATUS "qmake found: ${QT_QMAKE_EXECUTABLE}")
+    
+    execute_process(
+        COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_PREFIX
+        OUTPUT_VARIABLE QT_INSTALL_PREFIX
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    list(APPEND CMAKE_PREFIX_PATH "${QT_INSTALL_PREFIX}/lib/cmake")
+    message(STATUS "Qt installed here: ${QT_INSTALL_PREFIX}")
 else()
-    message(STATUS "Qt${QT_MAJOR_VERSION}_HOME environment variable not set. Checking default paths.")
+    message(WARNING "qmake was not found in the PATH. Qt will not be automatically detected.")
 endif()
 
-#find_package should find everything fine so long as the ENV Variable is set or, for linux systems,
-#it is in the default install path.
-find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Widgets REQUIRED PATHS $ENV{Qt${QT_MAJOR_VERSION}_HOME})
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 add_subdirectory(HelloWorld)
