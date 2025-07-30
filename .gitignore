@@ -179,6 +179,7 @@ bld/
 [Ll]ogs/
 [Bb]uild/
 [Bb]uilds/
+[Tt]emp/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
